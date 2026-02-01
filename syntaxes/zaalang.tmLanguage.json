@@ -1,0 +1,750 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Zaalang",
+    "fileTypes": [
+        "zaa"
+    ],
+    "scopeName": "source.zaa",
+    "patterns": [
+        {
+            "comment": "import statements",
+            "name": "meta.use.zaa",
+            "begin": "\\b(import)\\s",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.zaa"
+                }
+            },
+            "end": ";",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.semi.zaa"
+                }
+            }
+        },
+        {
+            "include": "#block-comments"
+        },
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#attributes"
+        },
+        {
+            "include": "#constants"
+        },
+        {
+            "include": "#functions"
+        },
+        {
+            "include": "#types"
+        },
+        {
+            "include": "#keywords"
+        },
+        {
+            "include": "#namespaces"
+        },
+        {
+            "include": "#punctuation"
+        },
+        {
+            "include": "#strings"
+        },
+        {
+            "include": "#variables"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "comment": "documentation comments",
+                    "name": "comment.line.documentation.zaa",
+                    "match": "(///).*$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "line comments",
+                    "name": "comment.line.double-slash.zaa",
+                    "match": "(//).*$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.zaa"
+                        }
+                    }
+                }
+            ]
+        },
+        "block-comments": {
+            "patterns": [
+                {
+                    "comment": "empty block comments",
+                    "name": "comment.block.zaa",
+                    "match": "/\\*\\*/"
+                },
+                {
+                    "comment": "block documentation comments",
+                    "name": "comment.block.documentation.zaa",
+                    "begin": "/\\*\\*",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        }
+                    ]
+                },
+                {
+                    "comment": "block comments",
+                    "name": "comment.block.zaa",
+                    "begin": "/\\*(?!\\*)",
+                    "end": "\\*/",
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        }
+                    ]
+                }
+            ]
+        },
+        "constants": {
+            "patterns": [
+                {
+                    "comment": "ALL CAPS constants",
+                    "name": "constant.other.caps.zaa",
+                    "match": "\\b[A-Z]{2}[A-Z0-9_]*\\b"
+                },
+                {
+                    "comment": "constant declarations",
+                    "match": "\\b(const)\\s+([A-Za-z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type.zaa"
+                        },
+                        "2": {
+                            "name": "constant.other.caps.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "decimal integers and floats",
+                    "name": "constant.numeric.decimal.zaa",
+                    "match": "\\b\\d[\\d_]*(\\.?)[\\d_]*(?:(E|e)([+-]?)([\\d_]+))?(f32|f64|i128|i16|i32|i64|i8|isize|u128|u16|u32|u64|u8|usize)?\\b",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.separator.dot.decimal.zaa"
+                        },
+                        "2": {
+                            "name": "keyword.operator.exponent.zaa"
+                        },
+                        "3": {
+                            "name": "keyword.operator.exponent.sign.zaa"
+                        },
+                        "4": {
+                            "name": "constant.numeric.decimal.exponent.mantissa.zaa"
+                        },
+                        "5": {
+                            "name": "entity.name.type.numeric.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "hexadecimal integers",
+                    "name": "constant.numeric.hex.zaa",
+                    "match": "\\b0x[\\da-fA-F_]+(i128|i16|i32|i64|i8|isize|u128|u16|u32|u64|u8|usize)?\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "octal integers",
+                    "name": "constant.numeric.oct.zaa",
+                    "match": "\\b0o[0-7_]+(i128|i16|i32|i64|i8|isize|u128|u16|u32|u64|u8|usize)?\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "binary integers",
+                    "name": "constant.numeric.bin.zaa",
+                    "match": "\\b0b[01_]+(i128|i16|i32|i64|i8|isize|u128|u16|u32|u64|u8|usize)?\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "booleans",
+                    "name": "constant.language.bool.zaa",
+                    "match": "\\b(true|false)\\b"
+                }
+            ]
+        },
+        "escapes": {
+            "comment": "escapes: ASCII, byte, Unicode, quote, regex",
+            "name": "constant.character.escape.zaa",
+            "match": "(\\\\)(?:(?:(x[0-7][\\da-fA-F])|(u(\\{)[\\da-fA-F]{4,6}(\\}))|.))",
+            "captures": {
+                "1": {
+                    "name": "constant.character.escape.backslash.zaa"
+                },
+                "2": {
+                    "name": "constant.character.escape.bit.zaa"
+                },
+                "3": {
+                    "name": "constant.character.escape.unicode.zaa"
+                },
+                "4": {
+                    "name": "constant.character.escape.unicode.punctuation.zaa"
+                },
+                "5": {
+                    "name": "constant.character.escape.unicode.punctuation.zaa"
+                }
+            }
+        },
+        "attributes": {
+            "comment": "attributes",
+            "name": "meta.attribute.zaa",
+            "begin": "(#)(\\[)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.attribute.zaa"
+                },
+                "3": {
+                    "name": "punctuation.brackets.attribute.zaa"
+                }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.brackets.attribute.zaa"
+                }
+            }
+        },
+        "functions": {
+            "patterns": [
+                {
+                    "comment": "function definition",
+                    "name": "meta.function.definition.zaa",
+                    "begin": "\\b(fn)\\s+([A-Za-z0-9_\\!<>\\=]+)((\\()|(<))",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "keyword.other.fn.zaa"
+                        },
+                        "2": {
+                            "name": "entity.name.function.zaa"
+                        },
+                        "4": {
+                            "name": "punctuation.brackets.round.zaa"
+                        },
+                        "5": {
+                            "name": "punctuation.brackets.angle.zaa"
+                        }
+                    },
+                    "end": "(\\{)|(;)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.brackets.curly.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.semi.zaa"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                },                
+                {
+                    "comment": "function/method calls, chaining",
+                    "name": "meta.function.call.zaa",
+                    "begin": "([A-Za-z0-9_]+)(\\()",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "entity.name.function.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.brackets.round.zaa"
+                        }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.round.zaa"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#attributes"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                },
+                {
+                    "comment": "function/method calls with turbofish",
+                    "name": "meta.function.call.zaa",
+                    "begin": "([A-Za-z0-9_]+)(<.*?>\\()",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "entity.name.function.zaa"
+                        }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.brackets.round.zaa"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#block-comments"
+                        },
+                        {
+                            "include": "#comments"
+                        },
+                        {
+                            "include": "#attributes"
+                        },
+                        {
+                            "include": "#keywords"
+                        },
+                        {
+                            "include": "#constants"
+                        },
+                        {
+                            "include": "#functions"
+                        },
+                        {
+                            "include": "#namespaces"
+                        },
+                        {
+                            "include": "#punctuation"
+                        },
+                        {
+                            "include": "#strings"
+                        },
+                        {
+                            "include": "#types"
+                        },
+                        {
+                            "include": "#variables"
+                        }
+                    ]
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "comment": "control flow keywords",
+                    "name": "keyword.control.zaa",
+                    "match": "\\b(await|break|continue|else|for|rof|if|switch|return|try|catch|throw|while|yield|case|goto)\\b"
+                },
+                {
+                    "comment": "storage keywords",
+                    "name": "keyword.other.zaa storage.type.zaa",
+                    "match": "\\b(extern|let|var)\\b"
+                },
+                {
+                    "comment": "const keyword",
+                    "name": "storage.modifier.zaa",
+                    "match": "\\b(const)\\b"
+                },
+                {
+                    "comment": "enum keyword",
+                    "name": "keyword.declaration.enum.zaa storage.type.zaa",
+                    "match": "\\b(enum)\\b"
+                },
+                {
+                    "comment": "concept keyword",
+                    "name": "keyword.declaration.trait.zaa storage.type.zaa",
+                    "match": "\\b(concept)\\b"
+                },
+                {
+                    "comment": "struct keyword",
+                    "name": "keyword.declaration.struct.zaa storage.type.zaa",
+                    "match": "\\b(struct)\\b"
+                },
+                {
+                    "comment": "storage modifiers",
+                    "name": "storage.modifier.zaa",
+                    "match": "\\b(static)\\b"
+                },
+                {
+                    "comment": "other keywords",
+                    "name": "keyword.other.zaa",
+                    "match": "\\b(async|override|pub|typeof|union|using|vtable|throws)\\b"
+                },
+                {
+                    "comment": "param keywords",
+                    "name": "keyword.other.zaa",
+                    "match": "(\\&mut|\\&move|\\&impl)\\b"
+                },
+                {
+                    "comment": "fn",
+                    "name": "keyword.other.fn.zaa",
+                    "match": "\\bfn\\b"
+                },
+                {
+                    "comment": "mut",
+                    "name": "storage.modifier.mut.zaa",
+                    "match": "\\bmut\\b"
+                },
+                {
+                    "comment": "logical operators",
+                    "name": "keyword.operator.logical.zaa",
+                    "match": "(\\^|\\||\\|\\||&&|<<|>>|!|\\+\\+|\\-\\-)(?!=)"
+                },
+                {
+                    "comment": "logical AND, borrow references",
+                    "name": "keyword.operator.borrow.and.zaa",
+                    "match": "&(?![&=])"
+                },
+                {
+                    "comment": "assignment operators",
+                    "name": "keyword.operator.assignment.zaa",
+                    "match": "(\\+=|-=|\\*=|/=|%=|\\^=|&=|\\|=|<<=|>>=)"
+                },
+                {
+                    "comment": "single equal",
+                    "name": "keyword.operator.assignment.equal.zaa",
+                    "match": "(?<![<>])=(?!=|>)"
+                },
+                {
+                    "comment": "comparison operators",
+                    "name": "keyword.operator.comparison.zaa",
+                    "match": "(=(=)?(?!>)|!=|<=|(?<!=)>=)"
+                },
+                {
+                    "comment": "math operators",
+                    "name": "keyword.operator.math.zaa",
+                    "match": "(([+%]|(\\*(?!\\w)))(?!=))|(-(?!>))|(/(?!/))"
+                },
+                {
+                    "comment": "less than, greater than (special case)",
+                    "match": "(?:\\b|(?:(\\))|(\\])|(\\})))[ \\t]+([<>])[ \\t]+(?:\\b|(?:(\\()|(\\[)|(\\{)))",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.brackets.round.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.brackets.square.zaa"
+                        },
+                        "3": {
+                            "name": "punctuation.brackets.curly.zaa"
+                        },
+                        "4": {
+                            "name": "keyword.operator.comparison.zaa"
+                        },
+                        "5": {
+                            "name": "punctuation.brackets.round.zaa"
+                        },
+                        "6": {
+                            "name": "punctuation.brackets.square.zaa"
+                        },
+                        "7": {
+                            "name": "punctuation.brackets.curly.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "namespace operator",
+                    "name": "keyword.operator.namespace.zaa",
+                    "match": "::"
+                },
+                {
+                    "comment": "dereference asterisk",
+                    "match": "(\\*)(?=\\w+)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.dereference.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "dot access",
+                    "name": "keyword.operator.access.dot.zaa",
+                    "match": "\\.(?!\\.)"
+                },
+                {
+                    "comment": "ranges, range patterns",
+                    "name": "keyword.operator.range.zaa",
+                    "match": "\\.{2}(=|\\.)?"
+                },
+                {
+                    "comment": "colon",
+                    "name": "keyword.operator.key-value.zaa",
+                    "match": ":(?!:)"
+                },
+                {
+                    "comment": "dashrocket, skinny arrow",
+                    "name": "keyword.operator.arrow.skinny.zaa",
+                    "match": "->|<-"
+                },
+                {
+                    "comment": "hashrocket, fat arrow",
+                    "name": "keyword.operator.arrow.fat.zaa",
+                    "match": "=>"
+                },
+                {
+                    "comment": "dollar macros",
+                    "name": "keyword.operator.macro.dollar.zaa",
+                    "match": "\\$"
+                },
+                {
+                    "comment": "question mark operator, questionably sized, macro kleene matcher",
+                    "name": "keyword.operator.question.zaa",
+                    "match": "\\?"
+                }
+            ]
+        },
+        "namespaces": {
+            "patterns": [
+                {
+                    "comment": "namespace (non-type, non-function path segment)",
+                    "match": "(?<![A-Za-z0-9_])([A-Za-z0-9_]+)(::)",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.namespace.zaa"
+                        },
+                        "2": {
+                            "name": "keyword.operator.namespace.zaa"
+                        }
+                    }
+                }
+            ]
+        },
+        "types": {
+            "patterns": [
+                {
+                    "comment": "numeric types",
+                    "match": "(?<![A-Za-z])(int|float|f32|f64|i128|i16|i32|i64|i8|isize|u128|u16|u32|u64|u8|usize)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.numeric.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "primitive types",
+                    "name": "entity.name.type.primitive.zaa",
+                    "match": "\\b(bool|char|void|null)\\b"
+                },
+                {
+                    "comment": "struct declarations",
+                    "match": "\\b(struct|union|vtable|concept)\\s+(_?[A-Za-z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.struct.zaa storage.type.zaa"
+                        },
+                        "2": {
+                            "name": "entity.name.type.struct.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "enum declarations",
+                    "match": "\\b(enum)\\s+(_?[A-Za-z][A-Za-z0-9_]*)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.declaration.enum.zaa storage.type.zaa"
+                        },
+                        "2": {
+                            "name": "entity.name.type.enum.zaa"
+                        }
+                    }
+                }
+            ]
+        },
+        "punctuation": {
+            "patterns": [
+                {
+                    "comment": "comma",
+                    "name": "punctuation.comma.zaa",
+                    "match": ","
+                },
+                {
+                    "comment": "curly braces",
+                    "name": "punctuation.brackets.curly.zaa",
+                    "match": "[{}]"
+                },
+                {
+                    "comment": "parentheses, round brackets",
+                    "name": "punctuation.brackets.round.zaa",
+                    "match": "[()]"
+                },
+                {
+                    "comment": "semicolon",
+                    "name": "punctuation.semi.zaa",
+                    "match": ";"
+                },
+                {
+                    "comment": "square brackets",
+                    "name": "punctuation.brackets.square.zaa",
+                    "match": "[\\[\\]]"
+                },
+                {
+                    "comment": "angle brackets",
+                    "name": "punctuation.brackets.angle.zaa",
+                    "match": "(?<!=)[<>]"
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "comment": "double-quoted strings and byte strings",
+                    "name": "string.quoted.double.zaa",
+                    "begin": "(b?)(\")",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.zaa"
+                        }
+                    },
+                    "end": "\"",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.zaa"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escapes"
+                        },
+                        {
+                            "include": "#interpolations"
+                        }
+                    ]
+                },
+                {
+                    "comment": "double-quoted raw strings and raw byte strings",
+                    "name": "string.quoted.double.zaa",
+                    "begin": "(b?r)(#*)(\")",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.raw.zaa"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.string.zaa"
+                        }
+                    },
+                    "end": "(\")(\\2)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.string.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.string.raw.zaa"
+                        }
+                    }
+                },
+                {
+                    "comment": "characters and bytes",
+                    "name": "string.quoted.single.char.zaa",
+                    "begin": "(b)?(')",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "string.quoted.byte.raw.zaa"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.char.zaa"
+                        }
+                    },
+                    "end": "'",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.char.zaa"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#escapes"
+                        }
+                    ]
+                }
+            ]
+        },
+        "variables": {
+            "patterns": [
+                {
+                    "comment": "variables",
+                    "name": "variable.other.zaa",
+                    "match": "\\b(?<!(?<!\\.)\\.)[A-Za-z0-9_]+\\b"
+                }
+            ]
+        }
+   }
+}
