@@ -9,3 +9,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: package extension
         run: npx vsce package
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zaa-syntax-0.0.1.vsix
+          path: zaa-syntax-0.0.1.vsix
